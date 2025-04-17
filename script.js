@@ -1,47 +1,40 @@
+// Importamos THREE.js si aún no lo has hecho
+// const THREE = require('three');
+
 // 1. Escena, cámara y renderizador
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+scene.background = new THREE.Color(0xeeeeee);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 10;
+camera.position.z = 15;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // 2. Luces
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(1, 1, 1);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0x404040));
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
-// 3. Geometría del corazón
-const heartShape = new THREE.Shape();
-heartShape.moveTo(0, -1);
-heartShape.bezierCurveTo(1.5, -1.5, 1.5, 1, 0, 1);
-heartShape.bezierCurveTo(-1.5, 1, -1.5, -1.5, 0, -1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(5, 5, 5);
+scene.add(directionalLight);
 
-const extrudeSettings = {
-    depth: 0.4,
-    bevelEnabled: true,
-    bevelThickness: 0.1,
-    bevelSize: 0.1,
-    bevelSegments: 10
-};
+// 3. Geometría de la pelota
+const ballRadius = 5;
+const geometry = new THREE.SphereGeometry(ballRadius, 32, 32);
+const material = new THREE.MeshPhongMaterial({ color: 0xffde59 });
 
-const heartGeometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
-const heartMaterial = new THREE.MeshPhongMaterial({ color: 0xff69b4 });
-const heartMesh = new THREE.Mesh(heartGeometry, heartMaterial);
-heartMesh.rotation.x = Math.PI; // Rotar para que quede derecho
-scene.add(heartMesh);
+const ballMesh = new THREE.Mesh(geometry, material);
+scene.add(ballMesh);
 
 // 4. Texto 3D
 const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeometry = new THREE.TextGeometry('Te amo', {
+    const textGeometry = new THREE.TextGeometry('Dolores', {
         font: font,
-        size: 0.35, // Ajustar tamaño del texto
-        height: 0.1, // Ajustar grosor del texto
+        size: 0.5,
+        height: 0.1,
         curveSegments: 12,
         bevelEnabled: true,
         bevelThickness: 0.01,
@@ -55,8 +48,10 @@ loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
     });
 
     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-    textGeometry.center(); // Asegurarse de que el texto esté centrado
-    textMesh.position.y = -0.2; // Ajustar posición para que esté dentro del corazón
+    
+    // Centrando y posicionando el texto sobre la pelota
+    textGeometry.center();
+    textMesh.position.set(-1.5, 0, ballRadius); // Ajusta la posición según sea necesario
     scene.add(textMesh);
 });
 
@@ -64,10 +59,8 @@ loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
 function animate() {
     requestAnimationFrame(animate);
 
-    // Oscilación de movimiento y cambio de color
-    heartMesh.rotation.y += 0.01;
-    heartMesh.position.x = Math.sin(Date.now() * 0.001) * 2;
-    heartMaterial.color.setHSL((0.5 + Math.sin(Date.now() * 0.002)) % 1, 0.8, 0.5);
+    // Rotate the ball
+    ballMesh.rotation.y += 0.01;
 
     renderer.render(scene, camera);
 }
