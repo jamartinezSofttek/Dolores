@@ -1,3 +1,6 @@
+// Importamos THREE.js si aún no lo has hecho
+// const THREE = require('three');
+
 // 1. Escena, cámara y renderizador
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
@@ -38,10 +41,10 @@ scene.add(heartMesh);
 // 4. Texto 3D
 const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeometry = new THREE.TextGeometry('María Dolores te amo', {
+    const textGeometry = new THREE.TextGeometry('Te amo', {
         font: font,
-        size: 0.25,
-        height: 0.05,
+        size: 0.5, // Ajustar tamaño del texto
+        height: 0.1, // Ajustar grosor del texto
         curveSegments: 12,
         bevelEnabled: true,
         bevelThickness: 0.01,
@@ -56,14 +59,19 @@ loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
 
     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
     textGeometry.center(); // Asegurarse de que el texto esté centrado
-    textMesh.position.y = -0.3; // Ajustar posición para que esté dentro del corazón
+    textMesh.position.y = -0.2; // Ajustar posición para que esté dentro del corazón
     scene.add(textMesh);
 });
 
 // 5. Animación
 function animate() {
     requestAnimationFrame(animate);
+
+    // Animar el corazón para que se mueva
     heartMesh.rotation.y += 0.01;
+    heartMesh.position.x = Math.sin(Date.now() * 0.001) * 2;
+    heartMaterial.color.setHSL((Math.sin(Date.now() * 0.001) + 1) / 2, 1, 0.5); // Cambiar color del corazón
+
     renderer.render(scene, camera);
 }
 animate();
