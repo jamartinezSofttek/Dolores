@@ -1,6 +1,3 @@
-// Importamos THREE.js si aún no lo has hecho
-// const THREE = require('three');
-
 // 1. Escena, cámara y renderizador
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x000000);
@@ -43,7 +40,7 @@ const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
     const textGeometry = new THREE.TextGeometry('Te amo', {
         font: font,
-        size: 0.5, // Ajustar tamaño del texto
+        size: 0.35, // Ajustar tamaño del texto
         height: 0.1, // Ajustar grosor del texto
         curveSegments: 12,
         bevelEnabled: true,
@@ -67,10 +64,10 @@ loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json
 function animate() {
     requestAnimationFrame(animate);
 
-    // Animar el corazón para que se mueva
+    // Oscilación de movimiento y cambio de color
     heartMesh.rotation.y += 0.01;
     heartMesh.position.x = Math.sin(Date.now() * 0.001) * 2;
-    heartMaterial.color.setHSL((Math.sin(Date.now() * 0.001) + 1) / 2, 1, 0.5); // Cambiar color del corazón
+    heartMaterial.color.setHSL((0.5 + Math.sin(Date.now() * 0.002)) % 1, 0.8, 0.5);
 
     renderer.render(scene, camera);
 }
