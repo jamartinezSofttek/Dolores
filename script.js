@@ -1,93 +1,72 @@
-// Importamos THREE.js si aún no lo has hecho
-// const THREE = require('three');
-
 // 1. Escena, cámara y renderizador
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xeeeeee);
+scene.background = new THREE.Color(0x000000);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 20;
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // 2. Luces
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, 5);
-scene.add(directionalLight);
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(1, 1, 1);
+scene.add(light);
+scene.add(new THREE.AmbientLight(0x404040));
 
 // 3. Texto 3D
 const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeometry = new THREE.TextGeometry('Fernando', {
+    const textGeometry = new THREE.TextGeometry('Te amo, Fernando', {
         font: font,
-        size: 1,
-        height: 0.5,
+        size: 0.5,
+        height: 0.2,
         curveSegments: 12,
         bevelEnabled: true,
-        bevelThickness: 0.05,
-        bevelSize: 0.05
+        bevelThickness: 0.03,
+        bevelSize: 0.02
     });
 
     const textMaterial = new THREE.MeshPhongMaterial({ 
-        color: 0x00ff00,
+        color: 0xff0000,
         specular: 0xffffff,
         shininess: 100
     });
 
     const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-    
-    // Centro del texto
-    textGeometry.center();
+    textMesh.position.set(-2, 0, 0);
     scene.add(textMesh);
 
-    render();  // Render con fuente cargada
-});
+    // 4. Partículas (corazones)
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particlesCount = 1000;
+    const posArray = new Float32Array(particlesCount * 3);
 
-// 4. Corazones
-const heartShape = new THREE.Shape();
+    for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 10;
+    }
 
-heartShape.moveTo( 0, -0.5 );
-heartShape.bezierCurveTo( 0, -0.5, -0.5, -0.7, -0.5, -1 );
-heartShape.bezierCurveTo( -0.5, -1.3, 0, -1.5, 0, -1 );
-heartShape.bezierCurveTo( 0, -1.5, 0.5, -1.3, 0.5, -1 );
-heartShape.bezierCurveTo( 0.5, -0.7, 0, -0.5, 0, -0.5 );
-
-const hearts = [];
-const heartGeometry = new THREE.ExtrudeGeometry(heartShape, { depth: 0.5, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 0.1, bevelThickness: 0.1 });
-const heartMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
-for (let i = 0; i < 10; i++) {
-    const heartMesh = new THREE.Mesh(heartGeometry, heartMaterial);
-    heartMesh.position.set((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
-    scene.add(heartMesh);
-    hearts.push(heartMesh);
-}
-
-// 5. Animación
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Rotar el texto
-    textMesh.rotation.y += 0.01;
-
-    // Animar los corazones girando alrededor
-    hearts.forEach(heart => {
-        heart.rotation.x += 0.02;
-        heart.rotation.y += 0.02;
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        color: 0xff69b4,
+        transparent: true,
+        opacity: 0.8
     });
 
-    renderer.render(scene, camera);
-}
+    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particlesMesh);
 
-function render(){
+    // 5. Animación
+    function animate() {
+        requestAnimationFrame(animate);
+        textMesh.rotation.y += 0.01;
+        particlesMesh.rotation.y -= 0.002;
+        renderer.render(scene, camera);
+    }
     animate();
-}
-
-render();
+});
 
 // 6. Ajuste de ventana
 window.addEventListener('resize', () => {
