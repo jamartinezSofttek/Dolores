@@ -31,7 +31,7 @@ scene.add(ballMesh);
 // 4. Texto 3D
 const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeometry = new THREE.TextGeometry('Dolores', {
+    const textGeometry = new THREE.TextGeometry('Fernando', { // Cambio de texto
         font: font,
         size: 0.5,
         height: 0.1,
