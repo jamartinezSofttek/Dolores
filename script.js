@@ -18,7 +18,7 @@ scene.add(new THREE.AmbientLight(0x404040));
 // 3. Texto 3D
 const loader = new THREE.FontLoader();
 loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeometry = new THREE.TextGeometry('Te amo, Dolores', {
+    const textGeometry = new THREE.TextGeometry('Cada vez que pienso en ti mis ojos rompen en llantoy muy triste me pregunto ¿por qué te quiero tanto?', {
         font: font,
         size: 0.5,
         height: 0.2,
